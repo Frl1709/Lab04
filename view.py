@@ -1,5 +1,8 @@
 import flet as ft
 
+import controller
+import model as md
+
 class View(object):
     def __init__(self, page: ft.Page):
         # Page
@@ -27,15 +30,53 @@ class View(object):
         )
 
         # Add your stuff here
+        def languageChanged(e):
+            t.value = f"Language selected {self.dd.value}"
+            self.page.update()
+        def typeSerachSelected(e):
+            t2.value =f"Research selected {self._dd2.value}"
 
-        self.page.add([])
+        def manageSentence(e):
+            txtIn = self._txt.value.lower()
+            language = self._dd.value.lower()
+            modality = self._dd2.value
+            paroleErrate, time = controller.SpellChecker.handleSentence(txtIn, language, modality)
+            return paroleErrate, time
+
+        t = ft.Text()
+        self._dd = ft.Dropdown(
+            label="Select language",
+            width=720,
+            options=[
+                ft.dropdown.Option("Italian"),
+                ft.dropdown.Option("English"),
+                ft.dropdown.Option("Spanish")
+            ]
+        )
+        t2 = ft.Text()
+        self._dd2 = ft.Dropdown(
+            label="Select Modality",
+            width=200,
+            options=[
+                ft.dropdown.Option("Default"),
+                ft.dropdown.Option("Linear"),
+                ft.dropdown.Option("Dicotomic")
+            ]
+        )
+        self._txt = ft.TextField(
+            label="Add your sentence here")
+        btn = ft.ElevatedButton("Spell check", on_click=manageSentence)
+
+        self.page.add(ft.Row([self._dd]), ft.Row([self._dd2, self._txt, btn]))
 
         self.page.update()
 
     def update(self):
         self.page.update()
+
     def setController(self, controller):
         self.__controller = controller
+
     def theme_changed(self, e):
         """Function that changes the color theme of the app, when the corresponding
         switch is triggered"""

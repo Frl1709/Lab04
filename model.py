@@ -1,5 +1,6 @@
 import dictionary as d
 import richWord as rw
+import flet as ft
 
 class MultiDictionary:
 
@@ -113,3 +114,5 @@ def dichotomicSearch(word, currentDic):
             end = mean
 
     return False
+
+
