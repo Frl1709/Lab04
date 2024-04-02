@@ -3,6 +3,7 @@ import flet as ft
 import controller
 import model as md
 
+
 class View(object):
     def __init__(self, page: ft.Page):
         # Page
@@ -15,6 +16,9 @@ class View(object):
         # UI elements
         self.__title = None
         self.__theme_switch = None
+        self._dd = None
+        self._dd2 = None
+        self._txt = None
 
         # define the UI elements and populate the page
 
@@ -30,19 +34,6 @@ class View(object):
         )
 
         # Add your stuff here
-        def languageChanged(e):
-            t.value = f"Language selected {self.dd.value}"
-            self.page.update()
-        def typeSerachSelected(e):
-            t2.value =f"Research selected {self._dd2.value}"
-
-        def manageSentence(e):
-            txtIn = self._txt.value.lower()
-            language = self._dd.value.lower()
-            modality = self._dd2.value
-            paroleErrate, time = controller.SpellChecker.handleSentence(txtIn, language, modality)
-            return paroleErrate, time
-
         t = ft.Text()
         self._dd = ft.Dropdown(
             label="Select language",
@@ -60,14 +51,33 @@ class View(object):
             options=[
                 ft.dropdown.Option("Default"),
                 ft.dropdown.Option("Linear"),
-                ft.dropdown.Option("Dicotomic")
+                ft.dropdown.Option("Dichotomic")
             ]
         )
         self._txt = ft.TextField(
             label="Add your sentence here")
+        lv = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+        def manageSentence(e):
+            txtIn = self._txt.value.lower()
+            language = self._dd.value.lower()
+            modality = self._dd2.value
+            (lista_parole, time) = self.__controller.handleSentence(txtIn, language, modality)
+            lv.controls.append(ft.Text(f"Frase inserita: {txtIn}"))
+            lv.controls.append(ft.Text(f"Parole errate: {lista_parole}"))
+            lv.controls.append(ft.Text(f"Tempo richiesto dalla ricerca {time}"))
+            self.page.update()
+
         btn = ft.ElevatedButton("Spell check", on_click=manageSentence)
 
-        self.page.add(ft.Row([self._dd]), ft.Row([self._dd2, self._txt, btn]))
+        def languageChanged(e):
+            t.value = f"Language selected {self._dd.value}"
+            self.page.update()
+
+        def typeSerachSelected(e):
+            t2.value = f"Research selected {self._dd2.value}"
+
+        self.page.add(ft.Row([self._dd]), ft.Row([self._dd2, self._txt, btn]), lv)
 
         self.page.update()
 

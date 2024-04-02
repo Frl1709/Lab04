@@ -32,7 +32,6 @@ class SpellChecker:
                         paroleErrate = paroleErrate + str(parola) + " "
                 t2 = time.time()
                 return paroleErrate, t2 - t1
-
             case "Dichotomic":
                 t1 = time.time()
                 parole = self._multiDic.searchWordDichotomic(words, language)
